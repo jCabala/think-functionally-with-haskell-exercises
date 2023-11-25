@@ -18,5 +18,5 @@ expo :: Integer -> Integer -> Integer
 expo x n
     | n == 0    = 1
     | n == 1    = x
-    | even n    = let e = expo x (div n 2) in e * e
+    | even n    = let e = expo x (div n 2) in e ^ 2
     | otherwise = x * (expo x (n - 1))
