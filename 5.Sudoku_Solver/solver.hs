@@ -32,7 +32,7 @@ cp (xs:xss) = [x:ys | x <- xs, ys <- yss]
 valid :: Grid -> Bool
 valid g = all nodups (rows g) &&
           all nodups (cols g) &&
-          all nodups (boxs g) 
+          all nodups (boxes g) 
 
 nodups :: (Eq a) => [a] -> Bool
 nodups []     = True
@@ -45,3 +45,10 @@ cols :: Matrix a -> Matrix a
 cols [xs] = [[x] | x <- xs]
 cols (xs:xss) = zipWith (:) xs (cols xss)
 
+boxes :: Matrix a -> Matrix a
+boxes = map concat . concat .
+        map cols .
+        group . map group
+
+group [] = []
+group xs = take 3 xs : group (drop 3 xs)
