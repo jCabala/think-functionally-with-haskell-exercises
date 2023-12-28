@@ -13,7 +13,7 @@ solve :: Grid -> [Grid]
 solve = filter valid . completions
 
 completions :: Grid -> [Grid]
-completions = expand . choices
+completions = expand . many prune . choices
 
 choices :: Grid -> Matrix [Digit]
 choices = map (map choice)
@@ -54,14 +54,19 @@ group [] = []
 group xs = take 3 xs : group (drop 3 xs)
 
 prune :: Matrix [Digit] -> Matrix [Digit]
-prune = id
+prune = pruneBy boxes . pruneBy cols . pruneBy rows
 
 pruneRow :: Row [Digit] -> Row [Digit]
 pruneRow row = map (remove fixed) row
   where
     fixed = [d | [d] <- row]
 
+pruneBy f = f . map pruneRow . f
+
 remove :: [Digit] -> [Digit] -> [Digit]
 remove _ [x] = [x]
 remove ds xs = filter (`notElem` ds) xs
 
+many :: (Eq a) => (a -> a) -> a -> a
+many f x = if x == y then x else many f y
+  where y = f x
